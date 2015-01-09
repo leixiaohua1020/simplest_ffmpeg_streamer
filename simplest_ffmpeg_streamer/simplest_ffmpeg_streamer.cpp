@@ -43,6 +43,8 @@ int main(int argc, char* argv[])
 	//in_filename  = "cuc_ieschool.mp4";
 	//in_filename  = "cuc_ieschool.h264";
 	in_filename  = "cuc_ieschool.flv";// ‰»ÎURL£®Input file URL£©
+	//in_filename  = "shanghai03_p.h264";
+	
 	out_filename = "rtmp://localhost/publishlive/livestream";// ‰≥ˆ URL£®Output URL£©[RTMP]
 	//out_filename = "rtp://233.233.233.233:6666";// ‰≥ˆ URL£®Output URL£©[UDP]
 
