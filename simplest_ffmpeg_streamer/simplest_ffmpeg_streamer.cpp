@@ -19,13 +19,29 @@
 
 #include <stdio.h>
 
+#define __STDC_CONSTANT_MACROS
+
+#ifdef _WIN32
+//Windows
 extern "C"
 {
 #include "libavformat/avformat.h"
 #include "libavutil/mathematics.h"
 #include "libavutil/time.h"
 };
-
+#else
+//Linux...
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+#include <libavformat/avformat.h>
+#include <libavutil/mathematics.h>
+#include <libavutil/time.h>
+#ifdef __cplusplus
+};
+#endif
+#endif
 
 int main(int argc, char* argv[])
 {
@@ -36,7 +52,9 @@ int main(int argc, char* argv[])
 	AVPacket pkt;
 	const char *in_filename, *out_filename;
 	int ret, i;
-	
+	int videoindex=-1;
+	int frame_index=0;
+	int64_t start_time=0;
 	//in_filename  = "cuc_ieschool.mov";
 	//in_filename  = "cuc_ieschool.mkv";
 	//in_filename  = "cuc_ieschool.ts";
@@ -61,7 +79,6 @@ int main(int argc, char* argv[])
 		goto end;
 	}
 
-	int videoindex=-1;
 	for(i=0; i<ifmt_ctx->nb_streams; i++) 
 		if(ifmt_ctx->streams[i]->codec->codec_type==AVMEDIA_TYPE_VIDEO){
 			videoindex=i;
@@ -117,9 +134,7 @@ int main(int argc, char* argv[])
 		goto end;
 	}
 
-	int frame_index=0;
-
-	int64_t start_time=av_gettime();
+	start_time=av_gettime();
 	while (1) {
 		AVStream *in_stream, *out_stream;
 		//获取一个AVPacket（Get an AVPacket）

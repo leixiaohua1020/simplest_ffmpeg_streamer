@@ -16,3 +16,4 @@ call "D:\Program Files\Microsoft Visual Studio 10.0\VC\vcvarsall.bat"
 ::compile and link
 cl simplest_ffmpeg_streamer.cpp /link avcodec.lib avformat.lib avutil.lib ^
 avdevice.lib avfilter.lib postproc.lib swresample.lib swscale.lib /OPT:NOREF
+exit
