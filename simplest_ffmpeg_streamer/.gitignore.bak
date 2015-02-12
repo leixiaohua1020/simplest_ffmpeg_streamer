@@ -1,5 +1,5 @@
 Debug/
 Release/
-ipch/
 
-*.sdf
+*.exe
+*.obj
