@@ -1,0 +1,9 @@
+Debug/
+Release/
+
+*.exe
+*.obj
+*.out
+*.exe.manifest
+*.out.dSYM/
+*.flv

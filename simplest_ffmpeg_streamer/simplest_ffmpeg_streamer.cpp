@@ -46,8 +46,7 @@ extern "C"
 int main(int argc, char* argv[])
 {
 	AVOutputFormat *ofmt = NULL;
-	//输入对应一个AVFormatContext，输出对应一个AVFormatContext
-	//（Input AVFormatContext and Output AVFormatContext）
+	//Input AVFormatContext and Output AVFormatContext
 	AVFormatContext *ifmt_ctx = NULL, *ofmt_ctx = NULL;
 	AVPacket pkt;
 	const char *in_filename, *out_filename;
@@ -69,7 +68,7 @@ int main(int argc, char* argv[])
 	av_register_all();
 	//Network
 	avformat_network_init();
-	//输入（Input）
+	//Input
 	if ((ret = avformat_open_input(&ifmt_ctx, in_filename, 0, 0)) < 0) {
 		printf( "Could not open input file.");
 		goto end;
@@ -87,7 +86,7 @@ int main(int argc, char* argv[])
 
 	av_dump_format(ifmt_ctx, 0, in_filename, 0);
 
-	//输出（Output）
+	//Output
 	
 	avformat_alloc_output_context2(&ofmt_ctx, NULL, "flv", out_filename); //RTMP
 	//avformat_alloc_output_context2(&ofmt_ctx, NULL, "mpegts", out_filename);//UDP
@@ -99,7 +98,7 @@ int main(int argc, char* argv[])
 	}
 	ofmt = ofmt_ctx->oformat;
 	for (i = 0; i < ifmt_ctx->nb_streams; i++) {
-		//根据输入流创建输出流（Create output AVStream according to input AVStream）
+		//Create output AVStream according to input AVStream
 		AVStream *in_stream = ifmt_ctx->streams[i];
 		AVStream *out_stream = avformat_new_stream(ofmt_ctx, in_stream->codec->codec);
 		if (!out_stream) {
@@ -107,7 +106,7 @@ int main(int argc, char* argv[])
 			ret = AVERROR_UNKNOWN;
 			goto end;
 		}
-		//复制AVCodecContext的设置（Copy the settings of AVCodecContext）
+		//Copy the settings of AVCodecContext
 		ret = avcodec_copy_context(out_stream->codec, in_stream->codec);
 		if (ret < 0) {
 			printf( "Failed to copy context from input to output stream codec context\n");
@@ -119,7 +118,7 @@ int main(int argc, char* argv[])
 	}
 	//Dump Format------------------
 	av_dump_format(ofmt_ctx, 0, out_filename, 1);
-	//打开输出URL（Open output URL）
+	//Open output URL
 	if (!(ofmt->flags & AVFMT_NOFILE)) {
 		ret = avio_open(&ofmt_ctx->pb, out_filename, AVIO_FLAG_WRITE);
 		if (ret < 0) {
@@ -127,7 +126,7 @@ int main(int argc, char* argv[])
 			goto end;
 		}
 	}
-	//写文件头（Write file header）
+	//Write file header
 	ret = avformat_write_header(ofmt_ctx, NULL);
 	if (ret < 0) {
 		printf( "Error occurred when opening output URL\n");
@@ -137,7 +136,7 @@ int main(int argc, char* argv[])
 	start_time=av_gettime();
 	while (1) {
 		AVStream *in_stream, *out_stream;
-		//获取一个AVPacket（Get an AVPacket）
+		//Get an AVPacket
 		ret = av_read_frame(ifmt_ctx, &pkt);
 		if (ret < 0)
 			break;
@@ -167,7 +166,7 @@ int main(int argc, char* argv[])
 		in_stream  = ifmt_ctx->streams[pkt.stream_index];
 		out_stream = ofmt_ctx->streams[pkt.stream_index];
 		/* copy packet */
-		//转换PTS/DTS（Convert PTS/DTS）
+		//Convert PTS/DTS
 		pkt.pts = av_rescale_q_rnd(pkt.pts, in_stream->time_base, out_stream->time_base, (AVRounding)(AV_ROUND_NEAR_INF|AV_ROUND_PASS_MINMAX));
 		pkt.dts = av_rescale_q_rnd(pkt.dts, in_stream->time_base, out_stream->time_base, (AVRounding)(AV_ROUND_NEAR_INF|AV_ROUND_PASS_MINMAX));
 		pkt.duration = av_rescale_q(pkt.duration, in_stream->time_base, out_stream->time_base);
@@ -188,7 +187,7 @@ int main(int argc, char* argv[])
 		av_free_packet(&pkt);
 		
 	}
-	//写文件尾（Write file trailer）
+	//Write file trailer
 	av_write_trailer(ofmt_ctx);
 end:
 	avformat_close_input(&ifmt_ctx);
